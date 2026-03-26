@@ -235,16 +235,16 @@ class NitrogenTokenizer(Tokenizer):
         return action
 
     def unpack_actions(self, actions):
-        # Action data is still left aligned here [btn[0], btn[1], ..., btn[16], j_left[0], j_left[1], j_right[0], j_right[1], 0, 0, 0, 0].
-        # And the dimensions are [batch, 18, 25], not [batch, 18, 21].
-        # Need to remove padding before using negative indices for extracting j_left, j_right.
-        actions = actions[:, :, :21]
         if self.old_layout:
             # Unpack the actions into j_left, j_right, buttons
             j_left = actions[:, :, :2]
             j_right = actions[:, :, 2:4]
             buttons = actions[:, :, 4:]
         else:
+            # Action data is still left aligned here [btn[0], btn[1], ..., btn[16], j_left[0], j_left[1], j_right[0], j_right[1], 0, 0, 0, 0].
+            # And the dimensions are [batch, 18, 25], not [batch, 18, 21].
+            # Need to remove padding before using negative indices for extracting j_left, j_right.
+            actions = actions[:, :, :21]
             # Unpack the actions into j_left, j_right, buttons
             buttons = actions[:, :, :-4]
             j_left = actions[:, :, -4:-2]
